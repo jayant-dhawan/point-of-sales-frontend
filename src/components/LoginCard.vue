@@ -56,12 +56,15 @@ export default {
         const req = { email: this.email, password: this.password };
 
         const response = await axios.post(BASE_URL + "login", req);
-        console.log(response.data);
+
         if (response.data.status === "FAILED") {
           return Swal.fire("ERROR", response.data.errorMessage, "error");
         }
 
         this.setUser(response.data.data);
+        axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${response.data.data.token}`;
 
         Swal.hideLoading();
         Swal.fire("SUCCESS", "Successfully Logged in", "success");
