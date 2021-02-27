@@ -6,7 +6,9 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     user: {},
-    products: []
+    products: [],
+    category: "",
+    name: ""
   },
   mutations: {
     setUser(state, payload) {
@@ -15,6 +17,12 @@ export default new Vuex.Store({
     },
     setProducts(state, payload) {
       state.products = payload;
+    },
+    setCategory(state, payload) {
+      state.category = payload;
+    },
+    setName(state, payload) {
+      state.name = payload;
     }
   },
   actions: {
@@ -23,14 +31,30 @@ export default new Vuex.Store({
     },
     setProducts: ({ commit }, payload) => {
       commit("setProducts", payload);
+    },
+    setCategory: ({ commit }, payload) => {
+      commit("setCategory", payload);
+    },
+    setName: ({ commit }, payload) => {
+      commit("setName", payload);
     }
   },
   getters: {
     getProducts(state) {
-      return state.products;
+      let products = state.products;
+      if (state.category) {
+        products = products.filter(el => el.category == state.category);
+      }
+      if (state.name) {
+        products = products.filter(el =>
+          el.productName.toLowerCase().includes(state.name)
+        );
+      }
+      return products;
     },
     getCategories(state) {
-      return state.products.map(ele => ele.category);
+      const set = new Set(state.products.map(ele => ele.category));
+      return Array.from(set);
     }
   }
 });
