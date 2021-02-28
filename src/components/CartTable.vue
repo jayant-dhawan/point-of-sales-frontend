@@ -13,9 +13,17 @@
         <sui-table-cell>{{ item.productName }}</sui-table-cell>
         <sui-table-cell>{{ item.price }}</sui-table-cell>
         <sui-table-cell
-          ><sui-button @click="updateItemCount(item, 'sub')">-</sui-button>
-          <sui-input size="mini" :value="item.count" />
-          <sui-button @click="updateItemCount(item, 'add')">+</sui-button>
+          ><sui-button
+            compact
+            icon="minus"
+            @click="updateItemCount(item, 'sub')"
+          />
+          <sui-input size="mini" :value="item.count" disabled />
+          <sui-button
+            compact
+            icon="plus"
+            @click="updateItemCount(item, 'add')"
+          />
         </sui-table-cell>
         <sui-table-cell>{{ item.count * item.price }}</sui-table-cell>
       </sui-table-row>
@@ -34,8 +42,7 @@ export default {
   methods: {
     ...mapActions(["updateCart"]),
     updateItemCount(item, operation) {
-      console.log(this.getCart);
-      if (operation === "add") {
+      if (operation === "add" && item.count < item.available) {
         item.count += 1;
       } else if (operation === "sub") {
         item.count -= 1;
