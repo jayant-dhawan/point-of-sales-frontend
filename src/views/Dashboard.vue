@@ -57,6 +57,8 @@ export default {
 
       if (response.data.status === "FAILED") {
         Swal.fire("ERROR", response.data.errorMessage, "error");
+      } else if (response.data.errorName == "UnauthorizedError") {
+        this.$router.push("/logout");
       }
 
       this.setProducts(response.data.data);
