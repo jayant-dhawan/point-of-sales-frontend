@@ -1,5 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import createPersistedState from "vuex-persistedstate";
+
 
 Vue.use(Vuex);
 
@@ -58,7 +60,7 @@ export default new Vuex.Store({
       let index = cart.products.findIndex(el => el._id === payload._id);
       if (index == -1) {
         cart.products.push(payload);
-      } else if (payload.count > 0) {
+      } else if (payload.count <= payload.available && payload.count > 0) {
         cart.products[index].count = payload.count;
       } else if (payload.count <= 0) {
         cart.products = cart.products.filter(el => el._id !== payload._id);
@@ -103,6 +105,10 @@ export default new Vuex.Store({
     },
     getCart(state) {
       return state.cart;
+    },
+    getRole(state) {
+      return state.user.role;
     }
-  }
+  },
+  plugins: [createPersistedState()]
 });
