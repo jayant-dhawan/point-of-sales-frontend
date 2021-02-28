@@ -38,14 +38,18 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = window.localStorage.getItem("user") || "";
+  const isAuthenticated = window.localStorage.getItem("user");
 
-  if ((to.name == "Login" || to.name == "Register") && isAuthenticated) {
+  if (
+    (to.name == "Login" || to.name == "Register") &&
+    isAuthenticated != null
+  ) {
     next({ path: "/dashboard" });
-  } else if (to.name == "Dashboard" && !isAuthenticated) {
+  } else if (to.name == "Dashboard" && isAuthenticated == null) {
     next({ path: "/" });
   } else if (to.name === "Logout") {
     window.localStorage.removeItem("user");
+    window.localStorage.removeItem("vuex");
     next({ path: "/" });
   }
   next();
