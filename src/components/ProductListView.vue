@@ -12,6 +12,7 @@
       <div>
         <sui-card-group :items-per-row="6" stackable>
           <sui-card
+            @click="addToCart(product)"
             v-for="(product, index) in getProducts"
             :key="index"
             class="show"
@@ -20,8 +21,11 @@
               <sui-card-header>{{ product.productName }}</sui-card-header>
               <sui-card-meta>{{ product.category }}</sui-card-meta>
             </sui-card-content>
-            <sui-card-content extra class="onhover">
-              Price: {{ product.price }}
+            <sui-card-content extra class="onhover-hide">
+              {{ availibility(product.available) }}
+            </sui-card-content>
+            <sui-card-content extra class="onhover-show">
+              Price: ₹{{ product.price }}
             </sui-card-content>
           </sui-card>
         </sui-card-group>
@@ -31,7 +35,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import SearchBar from "../components/SearchBar";
 
 export default {
@@ -41,6 +45,22 @@ export default {
   },
   computed: {
     ...mapGetters(["getProducts"])
+  },
+  methods: {
+    ...mapActions(["updateCart"]),
+    availibility(units) {
+      if (units > 0) {
+        return "In Stock";
+      } else if (units == 0) {
+        return "Out of Stock";
+      }
+    },
+    addToCart(product) {
+      if (!product.count) product.count = 1;
+      else product.count += 1;
+
+      this.updateCart(product);
+    }
   }
 };
 </script>
@@ -48,15 +68,25 @@ export default {
 <style scoped>
 .center {
   width: 100%;
-  height: 85vh;
+  height: 82vh;
+  overflow: scroll;
 }
 .show {
   transition: all 2s;
 }
-.onhover {
-  opacity: 0;
+.onhover-hide {
+  display: block;
 }
-.show:hover .onhover {
-  opacity: 1;
+
+.onhover-show {
+  display: none;
+}
+
+.show:hover .onhover-show {
+  display: block;
+}
+
+.show:hover .onhover-hide {
+  display: none;
 }
 </style>

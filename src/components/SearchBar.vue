@@ -16,7 +16,7 @@ export default {
   data() {
     return {
       search: ""
-    }
+    };
   },
   methods: {
     ...mapActions(["setName"])

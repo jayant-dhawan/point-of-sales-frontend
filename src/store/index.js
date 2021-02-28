@@ -8,7 +8,14 @@ export default new Vuex.Store({
     user: {},
     products: [],
     category: "",
-    name: ""
+    name: "",
+    cart: {
+      products: [],
+      subTotal: 0,
+      total: 0,
+      vat: 0,
+      discount: 0
+    }
   },
   mutations: {
     setUser(state, payload) {
@@ -23,6 +30,9 @@ export default new Vuex.Store({
     },
     setName(state, payload) {
       state.name = payload;
+    },
+    updateCart(state, payload) {
+      state.cart = payload;
     }
   },
   actions: {
@@ -37,6 +47,41 @@ export default new Vuex.Store({
     },
     setName: ({ commit }, payload) => {
       commit("setName", payload);
+    },
+    updateCart({ commit, state }, payload) {
+      let cart = state.cart;
+      cart.discount = 0;
+      cart.subTotal = 0;
+      cart.total = 0;
+      cart.vat = 0;
+
+      let index = cart.products.findIndex(el => el._id === payload._id);
+      if (index == -1) {
+        cart.products.push(payload);
+      } else if (payload.count > 0) {
+        cart.products[index].count = payload.count;
+      } else if (payload.count <= 0) {
+        cart.products = cart.products.filter(el => el._id !== payload._id);
+      }
+
+      cart.products.forEach(el => {
+        cart.subTotal += el.price * el.count;
+        cart.vat += (el.vat * (el.price * el.count)) / 100;
+        cart.discount += (el.discount * (el.price * el.count)) / 100;
+      });
+      cart.total = cart.subTotal + cart.vat - cart.discount;
+
+      commit("updateCart", cart);
+    },
+    emptyCart({ commit }) {
+      let cart = {
+        products: [],
+        subTotal: 0,
+        total: 0,
+        vat: 0,
+        discount: 0
+      };
+      commit("updateCart", cart);
     }
   },
   getters: {
@@ -55,6 +100,9 @@ export default new Vuex.Store({
     getCategories(state) {
       const set = new Set(state.products.map(ele => ele.category));
       return Array.from(set);
+    },
+    getCart(state) {
+      return state.cart;
     }
   }
 });
