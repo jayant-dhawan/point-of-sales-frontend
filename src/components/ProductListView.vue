@@ -6,6 +6,14 @@
           <search-bar></search-bar>
         </sui-menu-item>
       </sui-menu-menu>
+      <sui-menu-menu position="right">
+        <sui-menu-item v-if="getRole === 'admin'">
+          <add-product></add-product>
+        </sui-menu-item>
+        <sui-menu-item>
+          <router-link to="/logout" class="mini ui button">Logout</router-link>
+        </sui-menu-item>
+      </sui-menu-menu>
     </sui-menu>
 
     <sui-segment attached="bottom" class="center">
@@ -18,8 +26,10 @@
             class="show"
           >
             <sui-card-content>
-              <sui-card-header>{{ product.productName }}</sui-card-header>
+              <sui-card-header>{{ product.productName }} </sui-card-header>
               <sui-card-meta>{{ product.category }}</sui-card-meta>
+              <edit-product :product="product" v-if="getRole === 'admin'" />
+              <delete-product :id="product._id" v-if="getRole === 'admin'" />
             </sui-card-content>
             <sui-card-content extra class="onhover-hide">
               {{ availibility(product.available) }}
@@ -37,14 +47,20 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 import SearchBar from "../components/SearchBar";
+import AddProduct from "../components/AddProduct";
+import EditProduct from "../components/EditProduct";
+import DeleteProduct from "../components/DeleteProduct";
 
 export default {
   name: "ProductListView",
   components: {
-    SearchBar
+    SearchBar,
+    AddProduct,
+    EditProduct,
+    DeleteProduct
   },
   computed: {
-    ...mapGetters(["getProducts"])
+    ...mapGetters(["getProducts", "getRole"])
   },
   methods: {
     ...mapActions(["updateCart"]),
@@ -56,6 +72,7 @@ export default {
       }
     },
     addToCart(product) {
+      if (product.available <= 0) return;
       if (!product.count) product.count = 1;
       else product.count += 1;
 
@@ -68,7 +85,7 @@ export default {
 <style scoped>
 .center {
   width: 100%;
-  height: 82vh;
+  height: 80vh;
   overflow: scroll;
 }
 .show {
