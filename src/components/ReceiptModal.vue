@@ -37,7 +37,7 @@
               <sui-table-row>
                 <sui-table-cell></sui-table-cell>
                 <sui-table-cell><b>Discount</b></sui-table-cell>
-                <sui-table-cell>{{ totalDiscount }}</sui-table-cell>
+                <sui-table-cell>-{{ totalDiscount }}</sui-table-cell>
               </sui-table-row>
               <sui-table-row>
                 <sui-table-cell><b>Grand Total</b></sui-table-cell>
@@ -81,7 +81,7 @@ export default {
     ...mapGetters(["getCart"])
   },
   methods: {
-    ...mapActions(["emptyCart"]),
+    ...mapActions(["emptyCart", "setProducts"]),
     async processSale() {
       Swal.showLoading();
       const cart = this.getCart;
@@ -92,6 +92,7 @@ export default {
       }
 
       const user = JSON.parse(window.localStorage.getItem("user"));
+      const headers = { headers: { Authorization: `Bearer ${user.token}` } };
 
       let req = {
         employeeId: user.id,
@@ -103,11 +104,7 @@ export default {
       };
 
       try {
-        const response = await axios.post(`${BASE_URL}sale`, req, {
-          headers: {
-            Authorization: `Bearer ${user.token}`
-          }
-        });
+        const response = await axios.post(`${BASE_URL}sale`, req, headers);
         const sale = response.data.data;
 
         if (response.data.status === "SUCCESS") {
@@ -122,11 +119,16 @@ export default {
             this.totalDiscount +=
               (element.discount * (element.price * element.count)) / 100;
           });
+
           this.emptyCart();
+
+          const products = await axios.get(BASE_URL + "product", headers);
+          this.setProducts(products.data.data);
+
           Swal.fire({ title: "SUCCESS", toast: true, icon: "success" });
           this.open = !this.open;
         } else {
-          Swal.fire("ERROR", response.errorMessage, "error");
+          Swal.fire("ERROR", response.data.errorMessage, "error");
         }
       } catch (error) {
         Swal.fire("ERROR", error.message, "error");
