@@ -14,6 +14,7 @@ export default new Vuex.Store({
       products: [],
       subTotal: 0,
       total: 0,
+      newVat: 0,
       vat: 0,
       discount: 0
     }
@@ -34,6 +35,10 @@ export default new Vuex.Store({
     },
     updateCart(state, payload) {
       state.cart = payload;
+    },
+    updateNewVat(state, payload) {
+      state.cart.total = payload.total;
+      state.cart.newVat = payload.newVat;
     }
   },
   actions: {
@@ -55,6 +60,7 @@ export default new Vuex.Store({
       cart.subTotal = 0;
       cart.total = 0;
       cart.vat = 0;
+      cart.newVat = 0;
 
       let index = cart.products.findIndex(el => el._id === payload._id);
       if (index == -1) {
@@ -70,9 +76,21 @@ export default new Vuex.Store({
         cart.vat += (el.vat * (el.price * el.count)) / 100;
         cart.discount += (el.discount * (el.price * el.count)) / 100;
       });
+      cart.newVat = payload.newVat;
       cart.total = cart.subTotal + cart.vat - cart.discount;
 
       commit("updateCart", cart);
+    },
+    updateNewVat({ commit, state }, payload) {
+      let cart = state.cart;
+      let total;
+      if (payload && payload > 0) {
+        total = cart.subTotal + payload - cart.discount;
+        commit("updateNewVat", { total, newVat: payload });
+      } else if (payload == 0) {
+        total = cart.subTotal + cart.vat - cart.discount;
+        commit("updateNewVat", { total, newVat: payload });
+      }
     },
     emptyCart({ commit }) {
       let cart = {

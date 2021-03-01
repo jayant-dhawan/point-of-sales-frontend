@@ -103,6 +103,10 @@ export default {
         products: cart.products
       };
 
+      if (cart.newVat && isNaN(parseInt(cart.newVat)) && cart.newVat > 0) {
+        req.vat = cart.newVat;
+      }
+
       try {
         const response = await axios.post(`${BASE_URL}sale`, req, headers);
         const sale = response.data.data;
