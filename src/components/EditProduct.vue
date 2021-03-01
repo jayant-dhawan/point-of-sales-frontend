@@ -16,21 +16,21 @@
             <sui-form-field>
               <label>Product Name</label>
               <input
-                v-model="product.productName"
+                v-model="newProduct.productName"
                 placeholder="Enter Product Name"
               />
             </sui-form-field>
             <sui-form-field>
               <label>Category</label>
               <input
-                v-model="product.category"
+                v-model="newProduct.category"
                 placeholder="Enter Product Category"
               />
             </sui-form-field>
             <sui-form-field>
               <label>Price (in Rupees)</label>
               <input
-                v-model="product.price"
+                v-model="newProduct.price"
                 placeholder="Enter Product Price (in Rupees)"
                 type="number"
                 min="0"
@@ -39,7 +39,7 @@
             <sui-form-field>
               <label>Available Uints</label>
               <input
-                v-model="product.available"
+                v-model="newProduct.available"
                 placeholder="Enter Available Units"
                 type="number"
                 min="0"
@@ -48,7 +48,7 @@
             <sui-form-field>
               <label>VAT (in %)</label>
               <input
-                v-model="product.vat"
+                v-model="newProduct.vat"
                 placeholder="Enter Value Added Tax (in %)"
                 type="number"
                 min="0"
@@ -58,7 +58,7 @@
             <sui-form-field>
               <label>Discount (in %)</label>
               <input
-                v-model="product.discount"
+                v-model="newProduct.discount"
                 placeholder="Enter Discount (in %)"
                 type="number"
                 min="0"
@@ -111,17 +111,18 @@ export default {
       this.open = !this.open;
       Swal.showLoading();
 
-      const product = this.product;
+      const product = this.newProduct;
       product.productName = product.productName.toLowerCase();
       product.category = product.category.toLowerCase();
 
       try {
-        const { token } = JSON.parse(window.localStorage.getItem("user"));
-        const response = await axios.put(BASE_URL + "product", product, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
+        const user = JSON.parse(window.localStorage.getItem("user"));
+        const headers = { headers: { Authorization: `Bearer ${user.token}` } };
+        const response = await axios.put(
+          `${BASE_URL}product`,
+          product,
+          headers
+        );
 
         if (response.data.status === "FAILED") {
           return Swal.fire("ERROR", response.data.errorMessage, "error");
@@ -129,11 +130,7 @@ export default {
           return this.$router.push("/logout");
         }
 
-        const products = await axios.get(BASE_URL + "product", {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
+        const products = await axios.get(`${BASE_URL}product`, headers);
 
         if (products.data.status === "FAILED") {
           return Swal.fire("ERROR", products.data.errorMessage, "error");
@@ -141,8 +138,8 @@ export default {
           return this.$router.push("/logout");
         }
 
-        Swal.fire("SUCCESS", "Product updated in database", "success");
         this.setProducts(products.data.data);
+        Swal.fire("SUCCESS", "Product updated in database", "success");
       } catch (error) {
         Swal.fire("ERROR", error.message, "error");
       }
