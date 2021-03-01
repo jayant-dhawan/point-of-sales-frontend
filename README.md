@@ -1,4 +1,11 @@
-# point-of-sales-frontend
+# Frontend for Point of Sales Assignment
+
+This is an Assignment for Codinova Job Interview Process.
+
+## Config
+
+Configure Backend API URL for the frontend.
+Update URL in `configs/index.js` by changing the value of `BASE_URL` object.
 
 ## Project setup
 ```
@@ -19,6 +26,3 @@ npm run build
 ```
 npm run lint
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
