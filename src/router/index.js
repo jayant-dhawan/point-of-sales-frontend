@@ -1,6 +1,8 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+
 import Home from "../views/Login.vue";
+import store from "../store";
 
 Vue.use(VueRouter);
 
@@ -13,8 +15,7 @@ const routes = [
   {
     path: "/register",
     name: "Register",
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/Register.vue")
+    component: () => import("../views/Register.vue")
   },
   {
     path: "/dashboard",
@@ -22,8 +23,7 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/Dashboard.vue")
+    component: () => import("../views/Dashboard.vue")
   },
   {
     path: "/logout",
@@ -38,18 +38,22 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = window.localStorage.getItem("user");
+  const isAuthenticated = JSON.parse(window.localStorage.getItem("user"));
 
   if (
     (to.name == "Login" || to.name == "Register") &&
-    isAuthenticated != null
+    isAuthenticated &&
+    isAuthenticated.token
   ) {
     next({ path: "/dashboard" });
-  } else if (to.name == "Dashboard" && isAuthenticated == null) {
+  } else if (to.name == "Dashboard" && !isAuthenticated) {
     next({ path: "/" });
   } else if (to.name === "Logout") {
-    window.localStorage.removeItem("user");
-    window.localStorage.removeItem("vuex");
+    store.dispatch("emptyCart");
+    store.dispatch("setUser", {});
+    store.dispatch("setProducts", []);
+    store.dispatch("setCategory", "");
+    window.localStorage.clear();
     next({ path: "/" });
   }
   next();

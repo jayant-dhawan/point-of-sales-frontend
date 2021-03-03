@@ -39,9 +39,6 @@ export default new Vuex.Store({
     updateNewVat(state, payload) {
       state.cart.total = payload.total;
       state.cart.newVat = payload.newVat;
-    },
-    resetState(state, payload) {
-      state = payload;
     }
   },
   actions: {
@@ -105,23 +102,6 @@ export default new Vuex.Store({
         discount: 0
       };
       commit("updateCart", cart);
-    },
-    resetState({ commit }) {
-      const defaultState = {
-        user: {},
-        products: [],
-        category: "",
-        name: "",
-        cart: {
-          products: [],
-          subTotal: 0,
-          total: 0,
-          newVat: 0,
-          vat: 0,
-          discount: 0
-        }
-      };
-      commit("resetState", defaultState);
     }
   },
   getters: {
