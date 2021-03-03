@@ -5,7 +5,7 @@ This is an Assignment for Codinova Job Interview Process.
 ## Config
 
 Configure Backend API URL for the frontend.
-Update URL in `configs/index.js` by changing the value of `BASE_URL` object.
+Update URL in `configs/index.js` by changing the value of `BASE_URL` variable.
 
 ## Project setup
 ```
