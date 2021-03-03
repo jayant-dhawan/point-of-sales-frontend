@@ -31,7 +31,7 @@
               />
             </sui-form-field>
             <sui-form-field>
-              <label>Available Uints</label>
+              <label>Available Units</label>
               <input
                 v-model="product.available"
                 placeholder="Enter Available Units"
@@ -136,6 +136,14 @@ export default {
       }
     },
     toggle() {
+      this.product = {
+        productName: "",
+        category: "",
+        price: 0,
+        available: 0,
+        vat: 0,
+        discount: 0
+      };
       this.open = !this.open;
     }
   }
