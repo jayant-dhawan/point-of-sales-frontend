@@ -2,14 +2,16 @@
   <sui-table basic="very">
     <sui-table-header>
       <sui-table-row>
-        <sui-table-header-cell>Product</sui-table-header-cell>
+        <sui-table-header-cell style="width: 50%"
+          >Product</sui-table-header-cell
+        >
         <sui-table-header-cell>Price</sui-table-header-cell>
         <sui-table-header-cell>Quantity</sui-table-header-cell>
         <sui-table-header-cell>Total</sui-table-header-cell>
       </sui-table-row>
     </sui-table-header>
     <sui-table-body>
-      <sui-table-row v-for="(item, index) in getCart.products" :key="index">
+      <sui-table-row v-for="item in getCart.products" :key="item._id">
         <sui-table-cell>{{ item.productName }}</sui-table-cell>
         <sui-table-cell>{{ item.price }}</sui-table-cell>
         <sui-table-cell
@@ -18,7 +20,12 @@
             icon="minus"
             @click="updateItemCount(item, 'sub')"
           />
-          <sui-input size="mini" :value="item.count" disabled />
+          <sui-input
+            style="width: 25%"
+            size="mini"
+            :value="item.count"
+            disabled
+          />
           <sui-button
             compact
             icon="plus"
