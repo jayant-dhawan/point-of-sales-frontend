@@ -45,11 +45,11 @@ export default {
 
       if (!this.email) {
         Swal.hideLoading();
-        return Swal.fire("ERROR", "Email is empty", "error");
+        return Swal.fire("ERROR", "Please enter email", "error");
       }
       if (!this.password) {
         Swal.hideLoading();
-        return Swal.fire("ERROR", "Password is empty", "error");
+        return Swal.fire("ERROR", "Please enter password", "error");
       }
 
       try {
@@ -62,9 +62,6 @@ export default {
         }
 
         this.setUser(response.data.data);
-        axios.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${response.data.data.token}`;
 
         Swal.hideLoading();
         Swal.fire("SUCCESS", "Successfully Logged in", "success");
